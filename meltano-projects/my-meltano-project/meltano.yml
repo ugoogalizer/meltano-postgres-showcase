@@ -1,0 +1,28 @@
+version: 1
+default_environment: dev
+project_id: c7a2f447-8e1e-473e-a842-d06bc65e45bb
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  extractors:
+  - name: tap-postgres
+    variant: meltanolabs
+    pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
+    config:
+      host: 10.20.10.0
+      user: postgres
+      database: pinnacledb
+    select:
+    - ecart-customer.*
+    metadata:
+      ecart-customer:
+        replication-method: INCREMENTAL
+        replication-key: updatedtimestamp
+      '*':
+        replication-method: INCREMENTAL
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl

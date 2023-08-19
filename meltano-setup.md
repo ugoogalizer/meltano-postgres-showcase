@@ -64,11 +64,20 @@ cd meltano-projects
 meltano init my-meltano-project
 cd my-meltano-project
 
+``` 
+## EXTRACT - Configure a Postgres Tap (source) with a dummy output 
+``` bash
 # Install Postgres Tap (source)
 meltano add extractor tap-postgres
 
 # Basic connection details (but not schema)
 meltano config tap-postgres set --interactive
+## Steps I used: 
+## 2 database
+## 5 host
+## 9 password
+## 27 user
+## e exit
 
 # Select only what we want
 meltano select tap-postgres --list --all
@@ -79,12 +88,8 @@ meltano config tap-postgres set _metadata secart-customer replication-method INC
 meltano config tap-postgres set _metadata secart-customer replication-key custid
 # meltano config tap-postgres set _metadata '*' replication-method INCREMENTAL
 
-
-
 #Add a dummy loader to dump the data into JSON
 meltano add loader target-jsonl --variant=andyh1203
-
-
 
 #Test the run
 meltano run tap-postgres target-jsonl
@@ -93,7 +98,63 @@ meltano run tap-postgres target-jsonl --full-refresh
 ``` 
 You should see data flowing from your source into the jsonl file. You can verify that it worked by looking inside the newly created file called output/*.jsonl.
 
-Archived work
+## LOAD - Configure a Postgres Target (Destination) 
+Useful doco: https://hub.meltano.com/loaders/target-postgres/
+
+``` bash
+# Install the Postgres Target (destination)
+meltano add loader target-postgres
+
+# Basic connection details (but not schema), alternatively you could just copy the yaml cofnig from the tap...
+meltano config target-postgres set --interactive
+## Steps I used: 
+## 2 database
+## 5 host
+## 9 password
+## 27 user
+## e exit
+
+# Extra settings that aren't found in the interactive screen: 
+meltano config target-postgres set default_target_schema ecart_raw
+# meltano config target-postgres set flattening_enabled [value]
+
+# Run ti
+meltano run tap-postgres target-postgres
+
+# Run it full from scratch (not sure it drops the records first though!!!)
+meltano run tap-postgres target-postgres --full-refresh
+
+```
+
+## TRANSFORM - Transform loaded data in destination Postgres with DBT
+
+Reference: https://docs.meltano.com/getting-started/#transform-loaded-data-for-analysis
+
+``` bash 
+# Install the target specific transformer to the project
+meltano add transformer dbt-postgres
+
+# Configure dbt-postgres
+meltano config dbt-postgres list
+
+# For example:
+meltano config dbt-postgres set host localhost
+meltano config dbt-postgres set user meltano
+meltano config dbt-postgres set password meltano
+meltano config dbt-postgres set port 5432
+meltano config dbt-postgres set dbname warehouse
+meltano config dbt-postgres set schema analytics
+
+```
+
+# TODO
+
+ - Split project into functional environments (dev, qa, prod ...)
+ - Setup secrets to be safely handled (in k8s need to use k8s secrets...)
+ - Test out log based incremental (rather than key based)
+ - Scheduling (with an orchestrator?)
+
+# Archived work
 ``` bash 
 
 

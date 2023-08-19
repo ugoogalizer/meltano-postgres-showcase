@@ -1,4 +1,6 @@
-# Datasource
+# Datasource (Tap for Meltano)
+
+This section creates a source database in PostgreSQL that incrementally adds data so we can test the incremental capabilities of downstream tools (i.e. Meltano/DBT).
 
 Intent is to re-use the work done from https://github.com/Noosarpparashar/startupv2/tree/master/python/dataGenerator/ecart_v2
 
@@ -8,13 +10,14 @@ Create the database (see k8s deployment) https://github.com/ugoogalizer/argo-cd/
 
 ## Setup Schema
 
-On the postgres server: 
+On the postgres server (I used pgadmin): 
 
 ``` sql
 
 create DATABASE PINNACLEDB;
 ALTER USER postgres WITH REPLICATION;
-\c pinnacledb;
+-- If using psql, switch to the new database with: 
+-- \c pinnacledb;
 create SCHEMA ECART;
 
 create table ECART.CUSTOMER (
@@ -69,7 +72,7 @@ podman run my-ecart-data-generator
 ```
 
 
-# Deleting Postgres content
+##  Deleting Postgres content
 
 If you need to delete all the content to start again without dropping schema: 
 ``` sql
@@ -84,4 +87,25 @@ DROP TABLE ECART.CUSTOMER;
 DROP TABLE ECART.PRODUCTINFO ;
 DROP TABLE ECART.STOREINFO ;
 DROP TABLE ECART.FACT_ORDER;
+```
+
+Target: 
+If you need to drop all the tables (including content) to start again: 
+``` sql
+DROP TABLE ECART_RAW.CUSTOMER;
+DROP TABLE ECART_RAW.PRODUCTINFO ;
+DROP TABLE ECART_RAW.STOREINFO ;
+DROP TABLE ECART_RAW.FACT_ORDER;
+```
+
+# Create Destination Database (Target for Meltano)
+
+In Postgres: 
+
+``` sql
+create DATABASE LAKEDB;
+-- If using psql, switch to the new database with: 
+-- \c lakedb;
+create SCHEMA ECART_RAW;
+
 ```

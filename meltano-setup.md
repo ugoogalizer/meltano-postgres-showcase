@@ -21,6 +21,8 @@ sudo make altinstall
 #The binary is `python3.10`, optionally add the following line to your `~/.bashrc` file:
   alias python3="python3.10"
 
+echo 'alias python3="python3.10"' >> ~/.bashrc
+
 source ~/.bashrc
 
 ```
@@ -37,9 +39,6 @@ su dev
 
 sudo yum install cifs-utils
 # mount -t cifs -o username=guest,password=Password1 //192.168.2.22/Drobox /media/devspace
-
-
-
 
 sudo chown matt:matt /media/devspace/
 sudo chmod 770 /media/devspace
@@ -65,15 +64,48 @@ cd meltano-projects
 meltano init my-meltano-project
 cd my-meltano-project
 
+# Install Postgres Tap (source)
+meltano add extractor tap-postgres
+
+# Basic connection details (but not schema)
+meltano config tap-postgres set --interactive
+
+# Select only what we want
+meltano select tap-postgres --list --all
+# meltano select tap-postgres ecart-customer.*
+meltano select tap-postgres --list --all
+# set replication method to key based incremental
+meltano config tap-postgres set _metadata secart-customer replication-method INCREMENTAL
+meltano config tap-postgres set _metadata secart-customer replication-key custid
+# meltano config tap-postgres set _metadata '*' replication-method INCREMENTAL
+
+
+
+#Add a dummy loader to dump the data into JSON
+meltano add loader target-jsonl --variant=andyh1203
+
+
+
+#Test the run
+meltano run tap-postgres target-jsonl
+meltano run tap-postgres target-jsonl --full-refresh
+
+``` 
+You should see data flowing from your source into the jsonl file. You can verify that it worked by looking inside the newly created file called output/*.jsonl.
+
+Archived work
+``` bash 
+
+
 # Setup Git
-git config --global --add safe.directory /media/devspace/meltano-projects/my-meltano-project
-git config --global user.email "test@test.com"
-git config --global user.name "Test"
+# git config --global --add safe.directory /media/devspace/meltano-projects/my-meltano-project
+# git config --global user.email "test@test.com"
+# git config --global user.name "Test"
 
 # Add version control
-git init
-git add --all
-git commit -m 'Initial Meltano project'
+# git init
+# git add --all
+# git commit -m 'Initial Meltano project'
 
 #Set to dev environment
 meltano environment list

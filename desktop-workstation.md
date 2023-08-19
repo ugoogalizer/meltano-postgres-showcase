@@ -31,6 +31,9 @@ sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.m
 dnf check-update
 sudo dnf install git code # or code-insiders
 
+git config --global user.email "a@a.com"
+git config --global user.name "a"
+
 # There is an alternate to download the rpm and offline install: https://go.microsoft.com/fwlink/?LinkID=760867
 ```
 

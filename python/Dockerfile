@@ -15,7 +15,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Set the command to run your Python script
-CMD  python callCustomer.py & python callProductStores.py & python callsalesfact.py
+CMD  python callCustomer.py & python callProductStores.py & python callSalesFact.py
 #docker network create my-network
 #docker network connect my-network startupv1-db-1
 #docker run --network=my-network my-ecart-data-generator

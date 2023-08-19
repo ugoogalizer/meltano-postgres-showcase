@@ -3,15 +3,19 @@ import threading
 import time
 import random
 import hashlib
+import os 
 from faker import Faker
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env file (POSTGRES_USER and POSTGRES_PASSWORD)
 
 speed = 150
 conn = psycopg2.connect(
     database="pinnacledb",
-    user="postgres",
-    host="",
+    user=os.getenv('POSTGRES_USER'),
+    host=os.getenv('POSTGRES_HOST'),
     port="5432",
-    password=""
+    password=os.getenv('POSTGRES_PASSWORD')
 )
 fake = Faker()
 
@@ -71,7 +75,9 @@ def generateProductsAndStores():
     suffix = random.choice(suffixes)
     storename = prefix + " " + infix + " " + suffix
 
-    productID = int(str(int(time.time()))[4:9])
+    #productID = 'P' + str(int(time.time()))[-8:]
+
+    productID = int(str(int(time.time_ns()))[3:12]) # should be 0:12 to better avoid collisons, but postgres would need to be a BIGINT
     productName = adjective + " " + noun
     productCategory = noun
     storeid = small_hash(storename)

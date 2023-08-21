@@ -3,6 +3,29 @@ default_environment: dev
 project_id: c7a2f447-8e1e-473e-a842-d06bc65e45bb
 environments:
 - name: dev
+  config:
+    plugins:
+      extractors:
+      - name: tap-postgres
+        config:
+          host: 10.20.10.0
+          user: postgres
+          database: pinnacledb
+      loaders:
+      - name: target-postgres
+        config:
+          host: 10.20.10.0
+          database: lakedb
+          user: postgres
+          default_target_schema: ecart_raw
+      transformers:
+      - name: dbt-postgres
+        config:
+          host: 10.20.10.0
+          user: meltano
+          port: 5432
+          dbname: lakedb
+          schema: ecart_raw
 - name: staging
 - name: prod
 plugins:
@@ -10,10 +33,6 @@ plugins:
   - name: tap-postgres
     variant: meltanolabs
     pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
-    config:
-      host: 10.20.10.0
-      user: postgres
-      database: pinnacledb
     select:
     - ecart-customer.*
     - ecart-fact_order.*
@@ -46,22 +65,12 @@ plugins:
     variant: meltanolabs
     pip_url: git+https://github.com/MeltanoLabs/target-postgres.git
     config:
-      host: 10.20.10.0
-      database: lakedb
       flattening_enabled: false
-      user: postgres
-      default_target_schema: ecart_raw
       # primary_key_required: 'true'
   transformers:
   - name: dbt-postgres
     variant: dbt-labs
     pip_url: dbt-core~=1.3.0 dbt-postgres~=1.3.0
-    config:
-      host: 10.20.10.0
-      user: meltano
-      port: 5432
-      dbname: lakedb
-      schema: ecart_raw
   utilities:
   - name: airflow
     variant: apache

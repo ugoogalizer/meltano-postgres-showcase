@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../.dbt"
+		}
+	],
+	"settings": {"files.associations": {
+			"*.sql": "jinja-sql"
+		},
+		"dbt.queryLimit": 500,
+		"[jijna-sql]": {
+			"editor.defaultFormatter": "innoverio.vscode-dbt-power-user",
+			"editor.formatOnSave": true  
+		  } 
+	} 
+}

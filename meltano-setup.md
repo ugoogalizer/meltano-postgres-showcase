@@ -45,7 +45,17 @@ sudo chmod 770 /media/devspace
 # Then mount this same location on your workstation...
 ```
 
+Optional - Install DBT and dbt-power-user vscode extension
+``` bash
+#create a venv
+# cd to root of your git repo
+# python3 -m venv pythonenv
+# source ./pythonenv/bin/activate
+# pip install dbt-postgres
+# touch meltano-projects/my-meltano-project/.meltano/transformers/dbt-profile.yml
 
+```
+Now install the dbt-power-user vscode extension, and switch your python interpreter to this virtual environment
 
 ## Install and Configure Meltano
 
@@ -209,6 +219,12 @@ meltano invoke airflow:initialize
 meltano invoke airflow users create -u admin@localhost -p password --role Admin -e admin@localhost -f admin -l admin
 
 ```
+## Start the scheduler: 
+This will now not only convert your defined schedules (confirmed from `meltano schedule list`) but also actualy schedules/runs them:
+``` bash
+meltano invoke airflow scheduler
+```
+
 
 ## Access the Airflow UI  (not required, but fun)
 ``` bash
@@ -229,15 +245,18 @@ https://docs.meltano.com/guide/production/#running-pipelines
  - Transform data with DBT - DONE (basic)
  - Visualise data with Superset
  - Split project into functional environments (dev, qa, prod ...)
- - Setup secrets to be safely handled (in k8s need to use k8s secrets...)
- - Test out log based incremental (rather than key based)
- - Scheduling (with an orchestrator?)
+ - Productionise / Containerise: 
+     - Setup secrets to be safely handled (in k8s need to use k8s secrets...)
+ - Test out log based incremental loads from Postgres (rather than key based)
+ - Scheduling (with an orchestrator?) - DONE (basic)
  - Pipe data (somehow) to a graph..
+ - Deal with changes to dimensions in the data model (aka, look at slowly changing dimension options.)
 
 
 
-
-
+# Other references: 
+https://meltano.com/blog/5-helpful-extract-load-practices-for-high-quality-raw-data/
+https://meltano.com/blog/top-5-of-dbt-packages-and-tools-in-2022/
 
 
 

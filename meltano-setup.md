@@ -180,15 +180,50 @@ https://medium.com/@suffyan.asad1/getting-started-with-dbt-data-build-tool-a-beg
 ```
 
 # Scheduling (with airflow)
+
 https://docs.meltano.com/guide/orchestration
 https://hub.meltano.com/utilities/airflow/
 
+To use airflow, we have a choice: either install a local airflow within Meltano, or use an external one.  For simplicity to start with, we'll use the internal Airflow... (but presume an external one would be better in the long run..)
+
+## Create a Schedule
+https://docs.meltano.com/reference/command-line-interface/#schedule
+``` bash
+# Define a job
+meltano job add tap-postgres-to-target-postgres-with-dbt --tasks "tap-postgres target-postgres dbt-postgres:run"
+
+# Schedule the job (every 5 minutes)
+meltano --environment=dev schedule add fivemin-postgres-load --job tap-postgres-to-target-postgres-with-dbt --interval '*/5 * * * *' 
+
+
+#Other useful commands: 
+meltano schedule list
+meltano schedule remove fivemin-postgres-load
+```
+
+## Install Airflow
+
+``` bash
+meltano add utility airflow
+meltano invoke airflow:initialize
+meltano invoke airflow users create -u admin@localhost -p password --role Admin -e admin@localhost -f admin -l admin
+
+```
+
+## Access the Airflow UI  (not required, but fun)
+``` bash
+sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+meltano invoke airflow webserver # note this is a terminal blocking command
+```
 # Analyse with Superset
 
 # CI/CD
 
 
-# Containerise Project
+# Containerise & Productionise Project
+
+https://docs.meltano.com/guide/production/#running-pipelines
 
 # TODO
  - Transform data with DBT - DONE (basic)

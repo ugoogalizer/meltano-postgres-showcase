@@ -10,10 +10,9 @@
 select ord.orderid, 
   ord.custid, 
   ord.productid, 
-  ord.purchasetimestamp
+  ord.purchasetimestamp,
   cust.custname, 
   cust.custadd,
-  prod.productid, 
   prod.productname, 
   prod.prodcat, 
   prod.storeid

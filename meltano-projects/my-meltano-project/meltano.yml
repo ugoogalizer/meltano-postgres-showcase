@@ -62,3 +62,16 @@ plugins:
       port: 5432
       dbname: lakedb
       schema: ecart_raw
+  utilities:
+  - name: airflow
+    variant: apache
+    pip_url: git+https://github.com/meltano/airflow-ext.git@main apache-airflow==2.3.3
+      --constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.3.3/constraints-no-providers-${MELTANO__PYTHON_VERSION}.txt
+jobs:
+- name: tap-postgres-to-target-postgres-with-dbt
+  tasks:
+  - tap-postgres target-postgres dbt-postgres:run
+schedules:
+- name: fivemin-postgres-load
+  interval: '*/5 * * * *'
+  job: tap-postgres-to-target-postgres-with-dbt

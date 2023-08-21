@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: orders_denormalised2
+    description: "Orders with full details"
+    columns:
+    - name: orderid
+      description: "sales order id"
+      tests:
+        - not_null
+        - unique
+    - name: custid
+      description: ""
+    - name: productid
+      description: ""
+    - name: purchasetimestamp
+      description: ""
+    - name: custname
+      description: ""
+    - name: custadd
+      description: ""
+    - name: productname
+      description: ""
+    - name: prodcat
+      description: ""
+    - name: storeid
+      description: ""

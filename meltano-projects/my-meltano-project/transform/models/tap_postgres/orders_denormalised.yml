@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: orders_denormalised
+    description: "Orders with full details"
+    columns:
+      - name: orderid
+        description: "sales order id"
+        tests:
+          - not_null
+          - unique
+          
+      

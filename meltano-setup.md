@@ -118,6 +118,10 @@ meltano config target-postgres set --interactive
 meltano config target-postgres set default_target_schema ecart_raw
 # meltano config target-postgres set flattening_enabled [value]
 
+#Log based and Incremental replications on tables with no Primary Key cause duplicates when merging UPDATE events. When set to true, stop loading data if no Primary Key is defined.
+# UPDATE This doesn't work for the Meltano variant of target-postgres
+# meltano config target-postgres set primary_key_required true
+
 # Run ti
 meltano run tap-postgres target-postgres
 
@@ -128,7 +132,13 @@ meltano run tap-postgres target-postgres --full-refresh
 
 ## TRANSFORM - Transform loaded data in destination Postgres with DBT
 
-Reference: https://docs.meltano.com/getting-started/#transform-loaded-data-for-analysis
+References: 
+ - https://docs.meltano.com/getting-started/#transform-loaded-data-for-analysis
+ - https://hub.meltano.com/transformers/dbt-postgres--dbt-labs
+
+Tutorials:
+ https://docs.meltano.com/getting-started/#transform-loaded-data-for-analysis
+
 
 ``` bash 
 # Install the target specific transformer to the project
@@ -138,21 +148,63 @@ meltano add transformer dbt-postgres
 meltano config dbt-postgres list
 
 # For example:
-meltano config dbt-postgres set host localhost
+meltano config dbt-postgres set host 10.20.10.0
 meltano config dbt-postgres set user meltano
-meltano config dbt-postgres set password meltano
+meltano config dbt-postgres set password password
 meltano config dbt-postgres set port 5432
-meltano config dbt-postgres set dbname warehouse
-meltano config dbt-postgres set schema analytics
+meltano config dbt-postgres set dbname lakedb
+meltano config dbt-postgres set schema ecart_raw
+
+# Create a basic transform file
+mkdir ./transform/models/tap_postgres
+touch  ./transform/models/tap_postgres/source.yml
+touch  ./transform/models/tap_postgres/orders_denormalised.sql
+# See the content comitted in version control for this.
+
+# Run the Transformer
+meltano run dbt-postgres:run
+meltano run dbt-postgres:run --full-refresh # doesn't work
+
+meltano invoke --list-commands dbt-postgres
+meltano invoke dbt-postgres --help
+meltano invoke dbt-postgres run --help
+meltano invoke dbt-postgres run --select tap_postgres+
+meltano invoke dbt-postgres run --full-refresh --select tap_postgres+
+
+# https://hub.meltano.com/transformers/dbt/#commands
+
+# DBT guides: 
+https://docs.getdbt.com/docs/build/incremental-models
+https://medium.com/@suffyan.asad1/getting-started-with-dbt-data-build-tool-a-beginners-guide-to-building-data-transformations-28e335be5f7e
 
 ```
 
-# TODO
+# Scheduling (with airflow)
+https://docs.meltano.com/guide/orchestration
+https://hub.meltano.com/utilities/airflow/
 
+# Analyse with Superset
+
+# CI/CD
+
+
+# Containerise Project
+
+# TODO
+ - Transform data with DBT - DONE (basic)
+ - Visualise data with Superset
  - Split project into functional environments (dev, qa, prod ...)
  - Setup secrets to be safely handled (in k8s need to use k8s secrets...)
  - Test out log based incremental (rather than key based)
  - Scheduling (with an orchestrator?)
+ - Pipe data (somehow) to a graph..
+
+
+
+
+
+
+
 
 # Archived work
 ``` bash 

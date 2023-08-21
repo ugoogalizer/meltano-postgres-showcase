@@ -21,7 +21,7 @@ ALTER USER postgres WITH REPLICATION;
 create SCHEMA ECART;
 
 create table ECART.CUSTOMER (
-  CUSTID VARCHAR(50),
+  CUSTID VARCHAR(50) PRIMARY key,
   CUSTNAME VARCHAR(100),
   CUSTADD VARCHAR(400),
   CREATEDTIMESTAMP TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -29,7 +29,7 @@ create table ECART.CUSTOMER (
 ); 
 
 create table ECART.PRODUCTINFO (
-  PRODUCTID INTEGER,
+  PRODUCTID INTEGER PRIMARY key,
   PRODUCTNAME VARCHAR(150),
   PRODCAT VARCHAR(400),
   STOREID varchar(70),
@@ -38,7 +38,7 @@ create table ECART.PRODUCTINFO (
 );
 
 create table ECART.STOREINFO (
-  STOREID varchar(70),
+  STOREID varchar(70) PRIMARY key,
   STORENAME VARCHAR(150),
   STOREADD VARCHAR(400),
   CREATEDTIMESTAMP TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -107,5 +107,11 @@ create DATABASE LAKEDB;
 -- If using psql, switch to the new database with: 
 -- \c lakedb;
 create SCHEMA ECART_RAW;
+-- Change the password:
+create user meltano with encrypted password 'password';
+grant all privileges on database lakedb to meltano;
+GRANT ALL ON schema ecart_raw TO meltano;
+GRANT USAGE ON SCHEMA ecart_raw TO meltano;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ecart_raw TO meltano;
 
 ```

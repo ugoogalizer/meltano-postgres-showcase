@@ -1,0 +1,10 @@
+config-version: 2
+version: 2
+sources:
+  - name: tap_postgres
+    schema: ecart_raw
+    tables:
+      - name: fact_order
+      - name: customer
+      - name: productinfo
+      - name: storeinfo

@@ -47,7 +47,7 @@ Con:
 
 Plus: 
  - Much clearer logs/debug process
- - strong ecosphere of supporting tools
+ - strong ecosphere of supporting tools (dbt-power-user, dbt-osmosis) .. https://meltano.com/blog/top-5-of-dbt-packages-and-tools-in-2022/
  - Simple enough secrets management
 Con:
  - Slightly harder to 

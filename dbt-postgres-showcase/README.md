@@ -31,7 +31,6 @@ Then add the following to your vscode workspace settings section:
 A new directory and file will have been created in `~/.dbt/profiles.yml`  Add the folder to vscode workspace, or just edit the profiles.yaml in whatever tool you want and fill in the connection details.
 
 
-
 # Postgres Setup
 
 ## Source
@@ -58,3 +57,21 @@ dbt debug
 dbt run
 
 ```
+
+
+# dbt-osmois
+https://z3z1ma.github.io/dbt-osmosis/docs/tutorial-basics/installation
+
+Add the following line to the `dbt_project.yaml` file: 
+``` yaml
+models:
+  your_project_name:
+    +dbt-osmosis: "_{model}.yml"
+```
+``` bash 
+pipx install dbt-osmosis
+pipx inject dbt-osmosis dbt-postgres
+cd dbt-postgres-showcase/pinnacle
+dbt-osmosis yaml refactor
+```
+

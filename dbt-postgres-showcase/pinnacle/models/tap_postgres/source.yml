@@ -5,6 +5,106 @@ sources:
     schema: ecart_raw
     tables:
       - name: fact_order
+        columns:
+          - name: orderid
+            description: ''
+          - name: custid
+            description: ''
+          - name: productid
+            description: ''
+          - name: purchasetimestamp
+            description: ''
+          - name: _sdc_extracted_at
+            description: ''
+          - name: _sdc_received_at
+            description: ''
+          - name: _sdc_batched_at
+            description: ''
+          - name: _sdc_deleted_at
+            description: ''
+          - name: _sdc_sequence
+            description: ''
+          - name: _sdc_table_version
+            description: ''
+          - name: _sdc_sync_started_at
+            description: ''
       - name: customer
+        columns:
+          - name: custid
+            description: ''
+          - name: custname
+            description: ''
+          - name: custadd
+            description: ''
+          - name: createdtimestamp
+            description: ''
+          - name: updatedtimestamp
+            description: ''
+          - name: _sdc_extracted_at
+            description: ''
+          - name: _sdc_received_at
+            description: ''
+          - name: _sdc_batched_at
+            description: ''
+          - name: _sdc_deleted_at
+            description: ''
+          - name: _sdc_sequence
+            description: ''
+          - name: _sdc_table_version
+            description: ''
+          - name: _sdc_sync_started_at
+            description: ''
       - name: productinfo
+        columns:
+          - name: productid
+            description: ''
+          - name: productname
+            description: ''
+          - name: prodcat
+            description: ''
+          - name: storeid
+            description: ''
+          - name: createdtimestamp
+            description: ''
+          - name: updatedtimestamp
+            description: ''
+          - name: _sdc_extracted_at
+            description: ''
+          - name: _sdc_received_at
+            description: ''
+          - name: _sdc_batched_at
+            description: ''
+          - name: _sdc_deleted_at
+            description: ''
+          - name: _sdc_sequence
+            description: ''
+          - name: _sdc_table_version
+            description: ''
+          - name: _sdc_sync_started_at
+            description: ''
       - name: storeinfo
+        columns:
+          - name: storeid
+            description: ''
+          - name: storename
+            description: ''
+          - name: storeadd
+            description: ''
+          - name: createdtimestamp
+            description: ''
+          - name: updatedtimestamp
+            description: ''
+          - name: _sdc_extracted_at
+            description: ''
+          - name: _sdc_received_at
+            description: ''
+          - name: _sdc_batched_at
+            description: ''
+          - name: _sdc_deleted_at
+            description: ''
+          - name: _sdc_sequence
+            description: ''
+          - name: _sdc_table_version
+            description: ''
+          - name: _sdc_sync_started_at
+            description: ''

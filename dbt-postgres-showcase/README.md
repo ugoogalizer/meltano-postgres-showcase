@@ -62,12 +62,14 @@ dbt run
 # dbt-osmois
 https://z3z1ma.github.io/dbt-osmosis/docs/tutorial-basics/installation
 
-Add the following line to the `dbt_project.yaml` file: 
+Add the `+dbt-osmosis: "_{model}.yml"` line to the `dbt_project.yaml` file: 
 ``` yaml
 models:
   your_project_name:
     +dbt-osmosis: "_{model}.yml"
 ```
+Commit any files to git you haven't already.
+Install and run dbt-osmosis to generate doco/yaml files
 ``` bash 
 pipx install dbt-osmosis
 pipx inject dbt-osmosis dbt-postgres

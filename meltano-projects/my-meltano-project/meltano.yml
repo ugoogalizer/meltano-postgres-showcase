@@ -57,6 +57,56 @@ plugins:
         #table-key-properties: [storeid]
       # '*':
       #   replication-method: INCREMENTAL
+  - name: tap-rest-api-msdk
+    variant: widen
+    pip_url: tap-rest-api-msdk
+    config:
+      api_url: https://earthquake.usgs.gov/fdsnws
+      streams: 
+      - name: us_earthquakes
+        path: /event/1/query
+        params:
+          format: geojson
+          #starttime: '2022-12-07'
+          #endtime: '2022-12-08'
+          starttime: '2023-09-16'
+          minmagnitude: 1
+        primary_keys:
+        - id
+        records_path: $.features[*]
+        num_inference_records: 200
+  - name: tap-rest-api-inc
+    inherit_from: tap-rest-api-msdk
+    config:
+      api_url: https://earthquake.usgs.gov/fdsnws
+      streams: 
+      - name: us_earthquakes_inc
+        path: /event/1/query
+        params:
+          format: geojson
+          #starttime: '2022-12-07'
+          #endtime: '2022-12-08'
+          updatedafter: '2023-09-16'
+          #orderby: time
+          minmagnitude: 1
+        primary_keys:
+        - id
+        records_path: $.features[*]
+        num_inference_records: 200
+        # Incremental attributes:
+        #replication_key: id
+        #replication_key: properties_updated
+        # source_search_field: starttime
+        #source_search_query:
+        #start_date: '2023-09-16'
+    schema:
+      us_earthquakes_inc:
+        properties_updated:
+          type: ["integer"]
+          format: date-epoch
+        properties_time:
+          type: ["integer"]
+          format: date-time
   loaders:
   - name: target-jsonl
     variant: andyh1203
@@ -77,10 +127,17 @@ plugins:
     pip_url: git+https://github.com/meltano/airflow-ext.git@main apache-airflow==2.3.3
       --constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.3.3/constraints-no-providers-${MELTANO__PYTHON_VERSION}.txt
 jobs:
-- name: tap-postgres-to-target-postgres-with-dbt
+#- name: tap-postgres-to-target-postgres-with-dbt
+#  tasks:
+#  - tap-postgres target-postgres dbt-postgres:run
+- name: tap-us-earthquakes-el
   tasks:
-  - tap-postgres target-postgres dbt-postgres:run
+  - tap-rest-api-msdk target-postgres 
 schedules:
-- name: fivemin-postgres-load
-  interval: '*/5 * * * *'
-  job: tap-postgres-to-target-postgres-with-dbt
+#- name: fivemin-postgres-load
+#  interval: '*/5 * * * *'
+#  job: tap-postgres-to-target-postgres-with-dbt
+#- name: fivemin-earthquake-load
+#  interval: '*/5 * * * *'
+#  job: tap-us-earthquakes-el
+

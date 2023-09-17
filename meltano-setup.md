@@ -232,6 +232,19 @@ sudo firewall-cmd --permanent --add-port=8080/tcp
 sudo firewall-cmd --reload
 meltano invoke airflow webserver # note this is a terminal blocking command
 ```
+
+Kill things: 
+``` bash
+sudo lsof -i:8080
+kill $(ps -o ppid= $(cat ./orchestrate/airflow/airflow-webserver.pid))
+sudo lsof -i:8080
+
+# Get the process group id (PGID), then kill that entire group
+sudo lsof -i:8080 -g 
+kill -- -189345
+sudo lsof -i:8080
+```
+
 # Analyse with Superset
 
 # CI/CD
@@ -258,6 +271,84 @@ https://docs.meltano.com/guide/production/#running-pipelines
 https://meltano.com/blog/5-helpful-extract-load-practices-for-high-quality-raw-data/
 https://meltano.com/blog/top-5-of-dbt-packages-and-tools-in-2022/
 
+
+# Testing out against an API 
+
+https://hub.meltano.com/extractors/tap-rest-api-msdk/#num_inference_records-setting
+https://earthquake.usgs.gov/fdsnws/event/1/
+https://engineering.widen.com/blog/Dagster-+-Meltano/
+
+``` bash
+meltano add extractor tap-rest-api-msdk
+
+# Already done
+# meltano add loader target-jsonl
+
+meltano config tap-rest-api-msdk set --interactive
+meltano config tap-rest-api-msdk list
+meltano select --list --all tap-rest-api-inc
+# Copy from the yaml file
+
+meltano elt tap-rest-api-msdk target-jsonl 
+meltano elt tap-rest-api-msdk target-postgres
+meltano elt tap-rest-api-incremental target-postgres
+
+```
+
+
+``` sql
+-- Table: ecart_raw.us_earthquakes
+
+-- DROP TABLE IF EXISTS ecart_raw.us_earthquakes;
+
+CREATE TABLE IF NOT EXISTS ecart_raw.us_earthquakes
+(
+    type character varying COLLATE pg_catalog."default",
+    properties_mag numeric,
+    properties_place character varying COLLATE pg_catalog."default",
+    properties_time TIMESTAMP WITH TIME ZONE,
+    properties_updated TIMESTAMP WITH TIME ZONE,
+    properties_tz character varying COLLATE pg_catalog."default",
+    properties_url character varying COLLATE pg_catalog."default",
+    properties_detail character varying COLLATE pg_catalog."default",
+    properties_felt bigint,
+    properties_cdi numeric,
+    properties_mmi numeric,
+    properties_alert character varying COLLATE pg_catalog."default",
+    properties_status character varying COLLATE pg_catalog."default",
+    properties_tsunami bigint,
+    properties_sig bigint,
+    properties_net character varying COLLATE pg_catalog."default",
+    properties_code character varying COLLATE pg_catalog."default",
+    properties_ids character varying COLLATE pg_catalog."default",
+    properties_sources character varying COLLATE pg_catalog."default",
+    properties_types character varying COLLATE pg_catalog."default",
+    properties_nst bigint,
+    properties_dmin numeric,
+    properties_rms numeric,
+    properties_gap numeric,
+    "properties_magType" character varying COLLATE pg_catalog."default",
+    properties_type character varying COLLATE pg_catalog."default",
+    properties_title character varying COLLATE pg_catalog."default",
+    geometry_type character varying COLLATE pg_catalog."default",
+    geometry_coordinates character varying COLLATE pg_catalog."default",
+    id character varying COLLATE pg_catalog."default" NOT NULL,
+    _sdc_extracted_at timestamp without time zone,
+    _sdc_received_at timestamp without time zone,
+    _sdc_batched_at timestamp without time zone,
+    _sdc_deleted_at timestamp without time zone,
+    _sdc_sequence bigint,
+    _sdc_table_version bigint,
+    _sdc_sync_started_at bigint,
+    CONSTRAINT us_earthquakes_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS ecart_raw.us_earthquakes
+    OWNER to postgres;
+
+```
 
 
 # Archived work
